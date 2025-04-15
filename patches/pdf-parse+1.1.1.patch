@@ -1,0 +1,27 @@
+diff --git a/node_modules/pdf-parse/index.js b/node_modules/pdf-parse/index.js
+index e9fc367..47fcd1e 100644
+--- a/node_modules/pdf-parse/index.js
++++ b/node_modules/pdf-parse/index.js
+@@ -3,7 +3,7 @@ const Pdf = require('./lib/pdf-parse.js');
+ 
+ module.exports = Pdf;
+ 
+-let isDebugMode = !module.parent; 
++let isDebugMode = false; 
+ 
+ //process.env.AUTO_KENT_DEBUG
+ 
+diff --git a/node_modules/pdf-parse/test/05-versions-space-default.js b/node_modules/pdf-parse/test/05-versions-space.js
+similarity index 99%
+rename from node_modules/pdf-parse/test/05-versions-space-default.js
+rename to node_modules/pdf-parse/test/05-versions-space.js
+index 7d013ca..30c02fe 100644
+--- a/node_modules/pdf-parse/test/05-versions-space-default.js
++++ b/node_modules/pdf-parse/test/05-versions-space.js
+@@ -1,5 +1,5 @@
+ const assert = require('assert');
+-const PDF = require('..');
++const PDF = require('pdf-parse');
+ const fs = require('fs');
+ 
+ // to test another valid pdf file just change this 5 constants.

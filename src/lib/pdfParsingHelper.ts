@@ -1,61 +1,33 @@
 import { z } from "zod";
 import { openai } from "@ai-sdk/openai";
 import { chunk } from "lodash";
-import { LlamaParseReader } from "llamaindex";
 import { OpenAISDKHelper } from "./openAISDKHelper";
 import axios from "axios";
 import PdfParse from "pdf-parse";
 
 export class PdfParsingHelper {
-  private reader: LlamaParseReader;
-  constructor(private openAISDKHelper: OpenAISDKHelper) {
-    this.reader = new LlamaParseReader({ resultType: "markdown" });
-  }
+  constructor(private openAISDKHelper: OpenAISDKHelper) {}
 
   async parsePdf(pdfUrl: string) {
-    const responseBuffer = await axios.get(pdfUrl, {
-      responseType: "arraybuffer",
-    });
-    const pdfParsePages: string[] = [];
-    async function render_page(pageData: any) {
-      //check documents https://mozilla.github.io/pdf.js/
-      const render_options = {
-        //replaces all occurrences of whitespace with standard spaces (0x20). The default value is `false`.
-        normalizeWhitespace: false,
-        //do not attempt to combine same line TextItem's. The default value is `false`.
-        disableCombineTextItems: false,
-      };
-
-      return pageData.getTextContent(render_options).then(function (
-        textContent: any,
-      ) {
-        let lastY,
-          text = "";
-        for (const item of textContent.items) {
-          if (lastY == item.transform[5] || !lastY) {
-            text += item.str;
-          } else {
-            text += "\n" + item.str;
-          }
-          lastY = item.transform[5];
-        }
-        pdfParsePages.push(text);
-        return text;
+    try {
+      const responseBuffer = await axios.get(pdfUrl, {
+        responseType: "arraybuffer",
       });
+
+      const dataBuffer = Buffer.from(responseBuffer.data);
+      const pdfData = await PdfParse(dataBuffer);
+
+      if (pdfData.numpages > 50) {
+        throw new Error("PDF is too large to be processed");
+      }
+
+      // Split the text into pages based on the page markers
+      const pages = pdfData.text.split(/\f/).map((page) => page.trim());
+      return pages.filter((page) => page.length > 0);
+    } catch (error) {
+      console.error("Error parsing PDF:", error);
+      throw new Error("Error while parsing PDF");
     }
-    const dataBuffer = Buffer.from(responseBuffer.data);
-    const defaultPdfParsePages = await PdfParse(dataBuffer, {
-      pagerender: render_page,
-    });
-    if (defaultPdfParsePages.numpages > 50) {
-      throw new Error("PDF is too large to be processed");
-    }
-    const pages = await this.reader.loadData(pdfUrl);
-    if (!pages || pages.length === 0) {
-      // fallback to pdf-parse
-      return pdfParsePages;
-    }
-    return pages?.map((page) => page.text);
   }
 
   async getFileRelevancy(pdfUrl: string, query: string) {

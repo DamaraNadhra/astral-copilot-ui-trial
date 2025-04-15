@@ -85,14 +85,6 @@ export const searchEngineRouter = createTRPCRouter({
               (existingDoc) => existingDoc.downloadKey === doc.downloadKey,
             ),
         );
-        console.log(
-          "documents: ",
-          documents.map((doc) => doc.filename),
-        );
-        console.log(
-          "new documents: ",
-          newDocuments.map((doc) => doc.filename),
-        );
         const createdDocuments = await ctx.db.document.createManyAndReturn({
           data: newDocuments || [],
           skipDuplicates: true,
