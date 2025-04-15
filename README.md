@@ -1,2 +1,2 @@
-# astral-copilot-ui-trial
-the FE trial of the astral copilot
+# astral-copilot-trial
+Trial project for astral-copilot
