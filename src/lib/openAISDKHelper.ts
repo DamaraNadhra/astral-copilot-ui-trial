@@ -26,7 +26,7 @@ export class OpenAISDKHelper {
     let matchingResult;
     let summaryResult;
 
-    let imageBlobs: Buffer[] = [];
+    const imageBlobs: Buffer[] = [];
 
     if (imageUrls) {
       for (const imageUrl of imageUrls) {

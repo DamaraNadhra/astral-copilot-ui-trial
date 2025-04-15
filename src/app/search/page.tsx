@@ -2,7 +2,7 @@
 
 import { GradeDropdown } from "../../components/GradeDropdown";
 import { SearchBar } from "../../components/SearchBar";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { SearchResults } from "../../components/SearchResults";
 import { api } from "~/trpc/react";
 import { Grade } from "@prisma/client";
@@ -15,6 +15,9 @@ import {
   useQueryParams,
   withDefault,
 } from "use-query-params";
+import { signIn, useSession } from "next-auth/react";
+import { Button } from "~/components/ui/button";
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState<{
     text: string;
@@ -23,11 +26,11 @@ export default function Home() {
     text: "",
     grade: Grade.ALL,
   });
+  const { data: session } = useSession();
   const [finalQuery, setFinalQuery] = useQueryParams({
     text: withDefault(StringParam, ""),
     grade: withDefault(createEnumParam(Object.values(Grade)), Grade.ALL),
   });
-
   const { data: searchResultsQuery, isLoading } =
     api.searchEngine.search.useQuery(
       {
@@ -41,7 +44,13 @@ export default function Home() {
         refetchOnWindowFocus: false,
       },
     );
-
+  if (!session) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Button onClick={() => signIn("github")}>Login</Button>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto flex w-full max-w-full flex-col items-center pt-6 sm:w-3/4">
       <div className="relative w-full px-4">

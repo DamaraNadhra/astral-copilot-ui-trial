@@ -1,5 +1,4 @@
 import type { Event } from "~/lib/data";
-import { CalendarEvent } from "./calendar-event";
 import { Draggable } from "./Draggable";
 import { Droppable } from "./Droppable";
 import { cn } from "~/lib/utils";
@@ -10,8 +9,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "./ui/carousel";
 import { useEffect, useRef, useState } from "react";

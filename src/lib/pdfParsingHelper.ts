@@ -19,7 +19,7 @@ export class PdfParsingHelper {
     const pdfParsePages: string[] = [];
     async function render_page(pageData: any) {
       //check documents https://mozilla.github.io/pdf.js/
-      let render_options = {
+      const render_options = {
         //replaces all occurrences of whitespace with standard spaces (0x20). The default value is `false`.
         normalizeWhitespace: false,
         //do not attempt to combine same line TextItem's. The default value is `false`.
@@ -31,7 +31,7 @@ export class PdfParsingHelper {
       ) {
         let lastY,
           text = "";
-        for (let item of textContent.items) {
+        for (const item of textContent.items) {
           if (lastY == item.transform[5] || !lastY) {
             text += item.str;
           } else {
@@ -60,7 +60,7 @@ export class PdfParsingHelper {
 
   async getFileRelevancy(pdfUrl: string, query: string) {
     const relevantPages = [];
-    const pageTexts = (await this.parsePdf(pdfUrl)) as string[];
+    const pageTexts = await this.parsePdf(pdfUrl);
 
     if (!pageTexts) {
       throw new Error("Error while parsing PDF");

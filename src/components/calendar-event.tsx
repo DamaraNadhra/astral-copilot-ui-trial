@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type React from "react";
 
 import type { Event } from "~/lib/data";
@@ -47,7 +48,7 @@ export function CalendarEvent({
       <div className="relative h-full w-full">
         {event.imageUrl && (
           <div className="absolute top-0 left-0 h-full w-full">
-            <img
+            <Image
               src={event.imageUrl}
               alt={event.title}
               className="h-full w-full object-cover"

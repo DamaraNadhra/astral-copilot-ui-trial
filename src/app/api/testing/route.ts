@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "~/server/auth";
 import pdfjs from "pdfjs-dist";
 import { db } from "~/server/db";
-import { PDFDocument } from "pdf-lib";
 import axios from "axios";
 import { LlamaParseReader } from "llamaindex";
 import { pdfParsingHelper } from "~/lib/buildHelpers";

@@ -76,6 +76,7 @@ export function SearchBar({
 
   const user = session?.user;
 
+
   const { data: searchHistory, isLoading: isHistoryLoading } =
     api.searchEngine.getSearchHistory.useQuery(
       {

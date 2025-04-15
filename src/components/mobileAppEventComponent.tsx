@@ -1,6 +1,7 @@
 import type { Event } from "~/lib/data";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
+import Image from "next/image";
 
 export default function MobileAppEventComponent({
   event,
@@ -16,7 +17,7 @@ export default function MobileAppEventComponent({
     >
       <div className="relative h-[240px]">
         {event.imageUrl && (
-          <img
+          <Image
             src={event.imageUrl}
             alt={event.title}
             className="absolute inset-0 h-full w-full object-cover"

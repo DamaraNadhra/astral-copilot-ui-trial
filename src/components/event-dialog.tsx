@@ -76,7 +76,7 @@ export function EventDialog({
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let durationMinutes = 0;
-    let newDate = new Date(formData.date);
+    const newDate = new Date(formData.date);
     if (name === "startTime") {
       const [startHour, startMinute] = value.split(":");
       const [endHour, endMinute] = formData.endTime.split(":");
@@ -91,7 +91,7 @@ export function EventDialog({
         (parseInt(endHour!) - parseInt(startHour!)) * 60 +
         (parseInt(endMinute!) - parseInt(startMinute!));
     }
-    
+
     console.log(durationMinutes);
     setFormData((prev) => ({
       ...prev,
