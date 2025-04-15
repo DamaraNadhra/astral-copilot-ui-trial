@@ -83,6 +83,7 @@ export function Calendar() {
     "desktop" | "mobile"
   >("desktop");
   const [isDragging, setIsDragging] = useState(false);
+  const [dndKey, setDndKey] = useState(`dnd-${Date.now()}`);
   // Get days in month
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -150,7 +151,6 @@ export function Calendar() {
   // Handle event click
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
-    console.log(event);
     setIsDetailsDialogOpen(true);
   };
 
@@ -173,10 +173,6 @@ export function Calendar() {
     setIsDialogOpen(true);
   };
 
-  useEffect(() => {
-    console.log(isDetailsDialogOpen);
-  }, [isDetailsDialogOpen]);
-
   // Save event
   const saveEvent = (event: Event) => {
     if (events.find((e) => e.id === event.id)) {
@@ -184,10 +180,9 @@ export function Calendar() {
     } else {
       setEvents([...events, event]);
     }
+    setSelectedEvent(event);
     setIsDialogOpen(false);
   };
-
-  
 
   // Delete event
   const deleteEvent = (eventId: string) => {
@@ -201,25 +196,10 @@ export function Calendar() {
     setActiveId(event.active.id as string);
   };
 
-  // Handle drag over
-  const handleDragOver = (e: React.DragEvent, day: number) => {
-    e.preventDefault();
-  };
-
-  // Handle drop
-  const handleDrop = (e: React.DragEvent, day: number) => {
-    e.preventDefault();
-    if (draggedEvent) {
-      const updatedEvent = {
-        ...draggedEvent,
-        date: new Date(year, month, day),
-      };
-      setEvents(
-        events.map((e) => (e.id === draggedEvent.id ? updatedEvent : e)),
-      );
-      setDraggedEvent(null);
-    }
-  };
+  useEffect(() => {
+    console.log(dndKey);
+    console.log(isDragging);
+  }, [dndKey]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -420,6 +400,7 @@ export function Calendar() {
 
   return (
     <DndContext
+      key={dndKey}
       onDragStart={handleDragStart}
       sensors={sensors}
       onDragEnd={handleDragEnd}
@@ -475,6 +456,7 @@ export function Calendar() {
             events={events}
             currentWeek={getCurrentWeekDates()}
             onEventClick={handleEventClick}
+            setDndKey={setDndKey}
             isDragging={isDragging}
             onTimeSlotClick={handleWeekTimeSlotClick}
             setCurrentDate={setCurrentDate}

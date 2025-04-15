@@ -29,8 +29,8 @@ export function CalendarEvent({
         height:
           mode === "week"
             ? `${event.duration * 1}px`
-            // : `calc((100% - ${(totalEvents - 1) * 4}px) / ${totalEvents})`,
-            : ""
+            : // : `calc((100% - ${(totalEvents - 1) * 4}px) / ${totalEvents})`,
+              "",
       }}
       className={cn(
         isDragging ? "" : mode === "week" ? "absolute" : "",
@@ -45,14 +45,18 @@ export function CalendarEvent({
       }}
     >
       <div className="relative h-full w-full">
-        <div className="absolute top-0 left-0 h-full w-full">
-          <img
-            src={event.imageUrl === "" ? null : event.imageUrl}
-            alt={event.title}
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <div className={`z-10 flex h-full w-full ${mode === "week" ? "flex-col" : shrink ? "flex-row" : "flex-col"} justify-between bg-white`}>
+        {event.imageUrl && (
+          <div className="absolute top-0 left-0 h-full w-full">
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
+        <div
+          className={`z-10 flex h-full w-full ${mode === "week" ? "flex-col p-2" : shrink ? "flex-row" : "flex-col p-1"} justify-between`}
+        >
           <div className="h-fit truncate font-semibold text-white opacity-90">
             {event.title}
           </div>

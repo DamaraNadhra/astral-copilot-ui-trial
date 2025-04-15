@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
-import { TRPCReactProvider } from "~/trpc/react";
+import { Providers } from "~/components/Providers";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -16,13 +16,16 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+// Ensure consistent class name generation
+const rootClassName = `${geist.variable}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="en" className={rootClassName}>
+      <body suppressHydrationWarning>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

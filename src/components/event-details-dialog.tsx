@@ -81,14 +81,6 @@ export function EventDetailsDialog({ event, isOpen, onClose, onEdit, onDelete }:
               <div className={`w-full h-[120px] ${event.color}`}></div>
             )}
             
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-2 right-2 text-white bg-black/20 hover:bg-black/40 rounded-full"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
             
             <div className={`absolute bottom-4 left-4 right-4 ${event.imageUrl ? 'text-white' : ''}`}>
               <Badge className={`${event.color} border-none`}>
@@ -147,7 +139,10 @@ export function EventDetailsDialog({ event, isOpen, onClose, onEdit, onDelete }:
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
         onSave={handleSaveEdit}
-        onDelete={onDelete}
+        onDelete={() => {
+          onDelete(event.id)
+          setIsEditDialogOpen(false)
+        }}
       />
     </>
   )

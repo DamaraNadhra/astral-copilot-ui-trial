@@ -27,6 +27,7 @@ interface MobileViewProps {
   currentWeek: Date[];
   setCurrentDate: (date: Date) => void;
   isDragging: boolean;
+  setDndKey: (key: string) => void;
 }
 
 export function MobileView({
@@ -37,6 +38,7 @@ export function MobileView({
   setCurrentDate,
   currentWeek,
   isDragging,
+  setDndKey,
 }: MobileViewProps) {
   // Filter events for the current day
   const dayEvents = events.filter(
@@ -84,6 +86,7 @@ export function MobileView({
           } else if (isLeftEdge) {
             api?.scrollPrev();
           }
+          // setDndKey(`dnd-${Date.now()}`);
           timeoutRef.current = null;
         }, SCROLL_DELAY);
       }
@@ -108,7 +111,8 @@ export function MobileView({
     endTime: "11:00",
     color: "bg-red-500",
     duration: 60,
-    imageUrl: "http://fastly.picsum.photos/id/737/1920/1080.jpg?hmac=aFzER8Y4wcWTrXVx2wVKSj10IqnygaF33gESj0WGDwI",
+    imageUrl:
+      "http://fastly.picsum.photos/id/737/1920/1080.jpg?hmac=aFzER8Y4wcWTrXVx2wVKSj10IqnygaF33gESj0WGDwI",
     location: "Dummy Location",
   };
 
@@ -119,14 +123,10 @@ export function MobileView({
 
     setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
-
-    api.on("init", () => {
-      const selectedDate = currentWeek[api.selectedScrollSnap()];
-      if (selectedDate) {
-        setCurrentDate(selectedDate);
-      }
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
+    const initialSlide = currentWeek.findIndex((date) =>
+      moment(date).isSame(currentDate, "day"),
+    );
+    api.scrollTo(initialSlide);
 
     api.on("select", () => {
       const selectedDate = currentWeek[api.selectedScrollSnap()];
@@ -141,10 +141,7 @@ export function MobileView({
     <div className="flex h-full flex-col overflow-hidden">
       {/* Current date header */}
       <div className="flex flex-col gap-2 bg-[#557af2] bg-gradient-to-l from-[#8563f2] to-[#557af2] py-4">
-        <span
-          className="p-4 text-start text-2xl font-semibold text-white"
-          onClick={() => api?.scrollNext()}
-        >
+        <span className="p-4 text-start text-2xl font-semibold text-white">
           Your Schedule
         </span>
         <div className="mx-4 flex flex-row justify-between">
@@ -158,7 +155,10 @@ export function MobileView({
                   : "bg-white/10",
                 "cursor-pointer transition-colors duration-200 hover:bg-white/20",
               )}
-              onClick={() => setCurrentDate(date)}
+              onClick={() => {
+                setCurrentDate(date);
+                api?.scrollTo(currentWeek.findIndex((d) => d.toISOString() === date.toISOString()));
+              }}
             >
               <span className="text-center text-sm text-white">
                 {moment(date).format("ddd")}
@@ -182,18 +182,12 @@ export function MobileView({
       </div>
 
       <Carousel
-        className="grow"
         setApi={setApi}
         opts={{
           watchDrag: isDragging ? false : true,
         }}
       >
-        <CarouselContent
-          className="grow"
-          onDragStart={() => {
-            console.log("drag start");
-          }}
-        >
+        <CarouselContent>
           {currentWeek.map((date) => {
             const dayEvents = events.filter(
               (event) =>
@@ -203,6 +197,7 @@ export function MobileView({
             );
             return (
               <CarouselItem
+                className="basis-[90%]"
                 key={date.toISOString()}
                 id={`mobile-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`}
               >

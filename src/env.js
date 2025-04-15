@@ -11,9 +11,13 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-    AUTH_DISCORD_ID: z.string(),
-    AUTH_DISCORD_SECRET: z.string(),
+    DIRECT_URL: z.string().url(),
     DATABASE_URL: z.string().url(),
+    CUSTOM_SEARCH_ENGINE_ID: z.string(),
+    LLAMA_CLOUD_API_KEY: z.string(),
+    OPENAI_API_KEY: z.string(),
+    AUTH_GITHUB_ID: z.string(),
+    AUTH_GITHUB_SECRET: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -34,9 +38,13 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
-    AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
-    AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
+    DIRECT_URL: process.env.DIRECT_URL,
     DATABASE_URL: process.env.DATABASE_URL,
+    CUSTOM_SEARCH_ENGINE_ID: process.env.CUSTOM_SEARCH_ENGINE_ID,
+    LLAMA_CLOUD_API_KEY: process.env.LLAMA_CLOUD_API_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
+    AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

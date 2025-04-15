@@ -113,9 +113,7 @@ export function EventDialog({
   };
 
   const handleDelete = () => {
-    if (event && event.id) {
-      onDelete(event.id);
-    }
+    onDelete(formData.id);
   };
 
   const formatDateForInput = (date: Date) => {

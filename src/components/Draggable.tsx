@@ -7,26 +7,33 @@ interface DraggableProps {
   id: string;
   children: React.ReactNode;
   className?: string;
+  isOverlay?: boolean;
 }
 
-export function Draggable({ id, children, className }: DraggableProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-  });
+export function Draggable({ id, children, className, isOverlay = false }: DraggableProps) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id,
+    });
 
   const style = transform
     ? {
-        transform: CSS.Translate.toString(transform),
+        transform: `translate(${transform.x}px, ${transform.y}px)`,
+        // position: isDragging ? ("fixed" as const) : ("relative" as const),
+        // zIndex: isDragging ? 1000 : undefined,
       }
     : undefined;
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      // style={isOverlay ? undefined : style}
       {...listeners}
       {...attributes}
-      className={cn(className)}
+      className={cn(
+        isOverlay && isOverlay && "bg-muted opacity-80 scale-105 cursor-grabbing z-50",
+        className,
+      )}
     >
       {children}
     </div>

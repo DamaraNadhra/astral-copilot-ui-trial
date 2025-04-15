@@ -93,7 +93,7 @@ export function WeekView({
         {hours.map((hour) => (
           <React.Fragment key={`hour-${hour}`}>
             {/* Hour label */}
-            <div className="sticky left-0 border-r border-b bg-white p-2 text-right text-sm text-gray-500">
+            <div className="sticky left-0 z-10 border-r border-b bg-white p-2 text-right text-sm text-gray-500">
               {formatHour(hour)}
             </div>
 
@@ -107,7 +107,7 @@ export function WeekView({
                   <div
                     className={cn(
                       "relative min-h-[60px] border-b border-l px-1 py-0",
-                      "transition-colors hover:bg-gray-50",
+                      // "transition-colors hover:bg-gray-50",
                     )}
                     onClick={() => onTimeSlotClick(date, hour)}
                   >
