@@ -52,12 +52,11 @@ export default function Home() {
     );
   }
   return (
-    <div className="flex w-full max-w-full flex-col items-center px-4 pt-6">
+    <div className="container mx-auto items-center px-4 pt-6">
       <div className="relative w-full px-4">
         <h1 className="mb-4 text-2xl font-semibold">PDF Search</h1>
-        {/* Search bar and grade dropdown container */}
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="max-w-1/2 ">
+          <div className="w-full">
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
@@ -76,7 +75,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Search results section */}
       <div className="mt-6 w-full px-4">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">

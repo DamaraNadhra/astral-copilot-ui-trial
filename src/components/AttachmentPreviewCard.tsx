@@ -45,7 +45,7 @@ export default function AttachmentPreviewCard({
       }
     };
 
-    resize(); // initial
+    resize();
 
     const observer = new ResizeObserver(() => resize());
     if (containerRef.current) {
@@ -62,14 +62,14 @@ export default function AttachmentPreviewCard({
   return (
     <div
       ref={containerRef}
-      className="relative flex h-42 w-full cursor-pointer items-start gap-3 overflow-hidden rounded-l-lg border shadow-sm transition-all duration-200 hover:shadow-md"
+      className="flex h-42 w-full cursor-pointer items-start gap-3 overflow-hidden rounded-l-lg border shadow-sm transition-all duration-200 hover:shadow-md md:w-72"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Document
         file={url}
         loading={
-          <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 p-4">
+          <div className="absolute inset-0 flex w-full flex-col items-center justify-center space-y-2 p-4 md:w-72">
             <Skeleton className="h-[80%] w-full rounded-md" />
             <Skeleton className="h-4 w-3/4 rounded-md" />
           </div>

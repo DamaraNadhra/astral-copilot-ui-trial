@@ -106,7 +106,6 @@ const RelevancyInfo = ({
   );
 };
 
-// Individual search result component
 const SearchResult = ({
   theDoc,
   query,

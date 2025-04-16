@@ -58,7 +58,7 @@ export class PdfParsingHelper {
         }
         return pages;
       } catch (error) {
-        console.error("Error parsing PDF with LlamaParseReader:", error);
+        console.error("Error parsing PDF with LlamaParseReader, fallback to pdf-parse:", error);
         return pages;
       }
     } catch (error) {
@@ -84,7 +84,9 @@ export class PdfParsingHelper {
             schema: z.object({
               relevanceScore: z.number(),
             }),
-            prompt: `based on the query: "${query}" and the page text: "${pageText}", decide a relevance score between 0 and 1 based on how relevant the page text is to the query.`,
+            prompt: `based on the query: "${query}" and the page text: "${pageText}", 
+            1. decide a relevance score between 0 and 1 based on how relevant the page text is to the query.
+            2. when deciding the relevancy please flag out (return a score of 0) any pages that contains unnecessary chapters like introduction, table of contents, etc.`,
             system: `You are a helpful assistant that is given a query and a page of text from a PDF. You need to decide if the page is relevant to the query.`,
             model: openai("gpt-4o-mini"),
           });
