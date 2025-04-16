@@ -4,26 +4,63 @@ import { chunk } from "lodash";
 import { OpenAISDKHelper } from "./openAISDKHelper";
 import axios from "axios";
 import PdfParse from "pdf-parse";
+import { Document, LlamaParseReader } from "llamaindex";
 
 export class PdfParsingHelper {
-  constructor(private openAISDKHelper: OpenAISDKHelper) {}
+  private reader: LlamaParseReader;
+  constructor(private openAISDKHelper: OpenAISDKHelper) {
+    this.reader = new LlamaParseReader({ resultType: "markdown" });
+  }
 
   async parsePdf(pdfUrl: string) {
     try {
       const responseBuffer = await axios.get(pdfUrl, {
         responseType: "arraybuffer",
       });
+      const pages: string[] = [];
+      const customRenderPage = (pageData: any) => {
+        return pageData.getTextContent().then((textContent: any) => {
+          const pageNumber = pageData.pageIndex + 1;
+          const strings = textContent.items.map((item: any) => item.str);
+          const text = strings.join("\n"); 
+          pages.push(text);
+          return `=== Page ${pageNumber} ===\n${text}\n\n`;
+        });
+      };
+      const loadDataWithTimeout = async (
+        reader: LlamaParseReader,
+        file: string,
+        timeoutMs = 1000 * 60 * 2,
+      ) => {
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("load_data timed out")), timeoutMs);
+        });
+
+        return Promise.race([reader.loadData(file), timeoutPromise]);
+      };
 
       const dataBuffer = Buffer.from(responseBuffer.data);
-      const pdfData = await PdfParse(dataBuffer);
+      const pdfData = await PdfParse(dataBuffer, {
+        pagerender: customRenderPage,
+      });
 
       if (pdfData.numpages > 50) {
-        throw new Error("PDF is too large to be processed");
+        return pages;
       }
-
-      // Split the text into pages based on the page markers
-      const pages = pdfData.text.split(/\f/).map((page) => page.trim());
-      return pages.filter((page) => page.length > 0);
+      try {
+        const parsedPages = (await loadDataWithTimeout(
+          this.reader,
+          pdfUrl,
+          1000 * 60 * 3,
+        )) as Document[];
+        if (parsedPages.length > 0) {
+          return parsedPages.map((page) => page.text);
+        }
+        return pages;
+      } catch (error) {
+        console.error("Error parsing PDF with LlamaParseReader:", error);
+        return pages;
+      }
     } catch (error) {
       console.error("Error parsing PDF:", error);
       throw new Error("Error while parsing PDF");
@@ -46,13 +83,12 @@ export class PdfParsingHelper {
           const testingResponse = await this.openAISDKHelper.generateObject({
             schema: z.object({
               relevanceScore: z.number(),
-              reasoning: z.string(),
             }),
-            prompt: `based on the query: "${query}" and the page text: "${pageText}", 
-      1. decide a relevance score between 0 and 1 based on how relevant the page text is to the query.
-      2. give the reasoning behind the relevance score.`,
+            prompt: `based on the query: "${query}" and the page text: "${pageText}", decide a relevance score between 0 and 1 based on how relevant the page text is to the query.`,
+            system: `You are a helpful assistant that is given a query and a page of text from a PDF. You need to decide if the page is relevant to the query.`,
             model: openai("gpt-4o-mini"),
           });
+          console.log("testingResponse", testingResponse);
           if (!testingResponse) {
             return null;
           }

@@ -40,6 +40,7 @@ export function Draggable({
       {...attributes}
       className={cn(
         isOverlay && "bg-muted z-50 scale-105 cursor-grabbing opacity-80",
+        isDragging && "opacity-50",
         className,
       )}
       onClick={onClick}

@@ -1,10 +1,23 @@
-import { Calendar } from "~/components/calendar"
+"use client";
+
+import { useState } from "react";
+import { Calendar } from "~/components/calendar";
 
 export default function CalendarPage() {
+  const [currentDeviceView, setCurrentDeviceView] = useState<
+    "desktop" | "mobile"
+  >("desktop");
   return (
     <div className="h-screen">
-      <span className="text-3xl font-bold mb-6 hidden md:flex">Calendar Events</span>
-      <Calendar />
+      {currentDeviceView === "desktop" && (
+        <span className="my-6 text-3xl font-bold flex justify-center items-center text-center w-full">
+          Calendar Events
+        </span>
+      )}
+      <Calendar
+        currentDeviceView={currentDeviceView}
+        setCurrentDeviceView={setCurrentDeviceView}
+      />
     </div>
-  )
+  );
 }

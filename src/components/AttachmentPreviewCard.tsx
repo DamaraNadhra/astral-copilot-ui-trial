@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FileText,
   Image as ImageIcon,
@@ -31,15 +31,38 @@ export default function AttachmentPreviewCard({
 }) {
   const [error, setError] = useState<Error | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-
+  const [pageWidth, setPageWidth] = useState(288);
+  const containerRef = useRef<HTMLDivElement>(null);
   const handleError = (error: Error) => {
     setError(error);
     console.error("PDF loading error:", error);
   };
 
+  useEffect(() => {
+    const resize = () => {
+      if (containerRef.current) {
+        setPageWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    resize(); // initial
+
+    const observer = new ResizeObserver(() => resize());
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
-      className="relative flex h-42 w-72 cursor-pointer items-start gap-3 overflow-hidden rounded-lg border shadow-sm transition-all duration-200 hover:shadow-md"
+      ref={containerRef}
+      className="relative flex h-42 w-full cursor-pointer items-start gap-3 overflow-hidden rounded-l-lg border shadow-sm transition-all duration-200 hover:shadow-md"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -71,14 +94,14 @@ export default function AttachmentPreviewCard({
       >
         <Page
           pageNumber={1}
-          width={288}
+          className="w-full"
+          width={pageWidth}
           height={128}
           renderTextLayer={false}
           renderAnnotationLayer={false}
         />
       </Document>
 
-      {/* Hover overlay with action buttons */}
       <div
         className={cn(
           "absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity duration-200",
@@ -88,7 +111,7 @@ export default function AttachmentPreviewCard({
         <Button
           variant="secondary"
           size="sm"
-          className="bg-white/90 hover:bg-white cursor-pointer"
+          className="cursor-pointer bg-white/90 hover:bg-white"
           onClick={(e) => {
             e.stopPropagation();
             window.open(link, "_blank");

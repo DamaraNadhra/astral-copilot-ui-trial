@@ -61,7 +61,7 @@ interface GradeDropdownProps {
 export function GradeDropdown({ value, onChange }: GradeDropdownProps) {
   return (
     <Select onValueChange={onChange} value={value} defaultValue={Grade.ALL}>
-      <SelectTrigger className="min-h-[50px] w-[180px] cursor-pointer">
+      <SelectTrigger className="min-h-[50px] max-w-[180px] cursor-pointer">
         <SelectValue placeholder="Select a grade" />
       </SelectTrigger>
       <SelectContent>

@@ -32,7 +32,11 @@ const RelevancyInfo = ({
     grade: grade,
   });
   useEffect(() => {
-    if (data && !data.success && data.error !== "PDF is too large to be processed") {
+    if (
+      data &&
+      !data.success &&
+      data.error !== "PDF is too large to be processed"
+    ) {
       onInvalid();
     }
   }, [data]);
@@ -132,8 +136,8 @@ const SearchResult = ({
     );
   };
   return (
-    <div className="mb-4 flex flex-col overflow-hidden rounded-lg border bg-white sm:flex-row">
-      <div className="relative w-full sm:w-1/4">
+    <div className="mb-4 flex flex-col overflow-hidden rounded-lg border bg-white md:flex-row">
+      <div className="relative w-full md:w-72">
         <AttachmentPreviewCard
           setTotalPages={setTotalPages}
           totalPages={totalPages}
@@ -142,7 +146,7 @@ const SearchResult = ({
           onInvalid={handleInvalid}
         />
       </div>
-      <div className="flex-1 p-4">
+      <div className="justify-senter flex w-full flex-col items-start p-4">
         <h3 className="mb-2 text-base font-medium">{theDoc.filename}</h3>
         <p className="text-sm text-gray-600">{theDoc.snippet}</p>
 

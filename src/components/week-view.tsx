@@ -24,10 +24,9 @@ export function WeekView({
   viewMode,
   onTimeSlotClick,
 }: WeekViewProps) {
-  // Generate hours for the day (6 AM to 10 PM)
-  const hours = Array.from({ length: 17 }, (_, i) => i + 6);
 
-  // Format date to display day of week and date
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+
   const formatDate = (date: Date) => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return `${days[date.getDay()]} ${date.getDate()}`;
@@ -35,14 +34,13 @@ export function WeekView({
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  // Format hour for display
+  // format hour for display
   const formatHour = (hour: number) => {
     if (hour === 0) return "12 AM";
     if (hour === 12) return "12 PM";
     return hour < 12 ? `${hour} AM` : `${hour - 12} PM`;
   };
 
-  // Check if an event should be displayed in this time slot
   const getEventsForTimeSlot = (date: Date, hour: number) => {
     return events.filter((event) => {
       const eventDate = new Date(event.date);
@@ -77,7 +75,6 @@ export function WeekView({
         style={{ maxHeight: "calc(100vh - 200px)" }}
       >
         <div className="grid min-w-[800px] grid-cols-[80px_repeat(7,1fr)]">
-          {/* Header row with days */}
           <div className="sticky top-0 z-10 border-b bg-white"></div>
           {weekDates.map((date, index) => (
             <div
@@ -92,15 +89,12 @@ export function WeekView({
             </div>
           ))}
 
-          {/* Time slots */}
           {hours.map((hour) => (
             <React.Fragment key={`hour-${hour}`}>
-              {/* Hour label */}
               <div className="sticky left-0 z-10 border-r border-b bg-white p-2 text-right text-sm text-gray-500">
                 {formatHour(hour)}
               </div>
 
-              {/* Day columns */}
               {weekDates.map((date, dayIndex) => {
                 const timeSlotEvents = getEventsForTimeSlot(date, hour);
                 const droppableId = `week-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}-${hour}`;
@@ -109,8 +103,8 @@ export function WeekView({
                   <Droppable key={droppableId} id={droppableId}>
                     <div
                       className={cn(
-                        "relative min-h-[60px] border-b border-l px-1 py-0",
-                        // "transition-colors hover:bg-gray-50",
+                        "relative min-h-[60px] border-b border-l px-1 py-0 cursor-pointer",
+                        "transition-colors hover:bg-gray-50",
                       )}
                       onClick={() => onTimeSlotClick(date, hour)}
                     >
@@ -133,21 +127,22 @@ export function WeekView({
             </React.Fragment>
           ))}
         </div>
-        <WeekdayEventsDialog
-          events={getEventsForDay(selectedDate)}
-          isOpen={weekdayEventsDialogOpen}
-          onClose={() => setWeekdayEventsDialogOpen(false)}
-          date={selectedDate}
-          onCreateEvent={() => {}}
-          onViewEvent={() => {}}
-        />
+        {selectedDate && (
+          <WeekdayEventsDialog
+            events={getEventsForDay(selectedDate)}
+            isOpen={weekdayEventsDialogOpen}
+            onClose={() => setWeekdayEventsDialogOpen(false)}
+            date={selectedDate}
+            onCreateEvent={() => onTimeSlotClick(selectedDate, 0)}
+            onViewEvent={onEventClick}
+          />
+        )}
       </div>
     );
   }
   return (
     <div className="overflow-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
       <div className="grid min-w-[800px] grid-cols-[80px_repeat(7,1fr)]">
-        {/* Header row with days */}
         <div className="sticky top-0 z-10 border-b bg-white"></div>
       </div>
     </div>

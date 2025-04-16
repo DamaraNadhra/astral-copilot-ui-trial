@@ -36,7 +36,7 @@ const initialEvents: Event[] = [
     date: new Date(2025, 3, 10),
     startTime: "05:00",
     location: "123 Main St, Anytown, USA",
-    endTime: "11:00",
+    endTime: "06:00",
     duration: 60,
     imageUrl:
       "https://fastly.picsum.photos/id/312/1920/1080.jpg?hmac=OD_fP9MUQN7uJ8NBR7tlii78qwHPUROGgohG4w16Kjw",
@@ -71,20 +71,27 @@ const initialEvents: Event[] = [
   },
 ];
 
-export function Calendar() {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 3, 10)); // April 2025
+export function Calendar({
+  currentDeviceView,
+  setCurrentDeviceView,
+}: {
+  currentDeviceView: "desktop" | "mobile";
+  setCurrentDeviceView: (view: "desktop" | "mobile") => void;
+}) {
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>(initialEvents);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [currentView, setCurrentView] = useState<"month" | "week">("month");
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [currentDeviceView, setCurrentDeviceView] = useState<
-    "desktop" | "mobile"
-  >("desktop");
   const [isDragging, setIsDragging] = useState(false);
   const [dndKey, setDndKey] = useState(`dnd-${Date.now()}`);
-  // Get days in month
+
+  useEffect(() => {
+    console.log(currentDate);
+  }, [currentDate]);
+
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -132,7 +139,7 @@ export function Calendar() {
     }
   };
 
-  const getCurrentWeekDates = () => {
+  const getCurrentWeekDates = (currentDate: Date) => {
     const dates = [];
     // Get the first day of the week (Sunday)
     const firstDayOfWeek = new Date(currentDate);
@@ -147,14 +154,15 @@ export function Calendar() {
     }
     return dates;
   };
-  
+
   // Handle event click
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
+    console.log(event);
     setIsDetailsDialogOpen(true);
   };
 
-  // Handle day click to create new event
+  // handle day click to create new event
   const handleDayClick = (day: number) => {
     const newEvent: Event = {
       id: `event-${Date.now()}`,
@@ -162,7 +170,7 @@ export function Calendar() {
       date: new Date(year, month, day),
       location: "123 Main St, Anytown, USA",
       startTime: "12:00",
-      duration: 1,
+      duration: 60,
       endTime: "13:00",
       imageUrl:
         "https://fastly.picsum.photos/id/312/1920/1080.jpg?hmac=OD_fP9MUQN7uJ8NBR7tlii78qwHPUROGgohG4w16Kjw",
@@ -173,7 +181,6 @@ export function Calendar() {
     setIsDialogOpen(true);
   };
 
-  // Save event
   const saveEvent = (event: Event) => {
     if (events.find((e) => e.id === event.id)) {
       setEvents(events.map((e) => (e.id === event.id ? event : e)));
@@ -184,15 +191,12 @@ export function Calendar() {
     setIsDialogOpen(false);
   };
 
-  // Delete event
   const deleteEvent = (eventId: string) => {
     setEvents(events.filter((e) => e.id !== eventId));
     setIsDialogOpen(false);
   };
 
-  // Handle drag start
   const handleDragStart = (event: any) => {
-    console.log("Drag started");
     setIsDragging(true);
     setActiveId(event.active.id as string);
   };
@@ -200,7 +204,6 @@ export function Calendar() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-    console.log("Drag ended");
     setIsDragging(false);
     const eventId = active.id as string;
     const parts = over.id.toString().split("-");
@@ -324,14 +327,14 @@ export function Calendar() {
     );
   }
 
-  // Add empty cells for days before the first day of the month
+  // add empty cells for days before the first day of the month
   for (let i = 0; i < firstDayOfMonth; i++) {
     calendarDays.push(
       <div key={`empty-${i}`} className="min-h-24 border bg-gray-50 p-1"></div>,
     );
   }
 
-  // Add cells for days in the month
+  // add cells for days in the month
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
     const dayEvents = events.filter(
@@ -402,12 +405,7 @@ export function Calendar() {
   });
   const keyboardSensor = useSensor(KeyboardSensor);
 
-  const sensors = useSensors(
-    mouseSensor,
-    touchSensor,
-    keyboardSensor,
-    // pointerSensor,
-  );
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 
   // useEffect(() => {
   //   console.log("isDragging", isDragging);
@@ -424,8 +422,10 @@ export function Calendar() {
     >
       <div
         className={cn(
-          "h-screen rounded-lg bg-white shadow",
-          currentDeviceView === "mobile" ? "h-full" : "py-4 border",
+          "rounded-lg bg-white shadow",
+          currentDeviceView === "mobile"
+            ? "h-screen"
+            : "container mx-auto border py-4",
           isDragging && "touch-none",
         )}
       >
@@ -451,11 +451,12 @@ export function Calendar() {
             <Button
               variant={currentDeviceView === "mobile" ? "default" : "outline"}
               size="sm"
-              onClick={() =>
+              onClick={() => {
                 setCurrentDeviceView(
                   currentDeviceView === "mobile" ? "desktop" : "mobile",
-                )
-              }
+                );
+                setCurrentView("week");
+              }}
             >
               Mobile
             </Button>
@@ -482,7 +483,7 @@ export function Calendar() {
           <MobileView
             currentDate={currentDate}
             events={events}
-            currentWeek={getCurrentWeekDates()}
+            currentWeek={getCurrentWeekDates(currentDate)}
             onEventClick={handleEventClick}
             setDndKey={setDndKey}
             isDragging={isDragging}
@@ -491,7 +492,7 @@ export function Calendar() {
           />
         ) : (
           <WeekView
-            weekDates={getCurrentWeekDates()}
+            weekDates={getCurrentWeekDates(currentDate)}
             events={events}
             viewMode={currentDeviceView}
             onEventClick={handleEventClick}

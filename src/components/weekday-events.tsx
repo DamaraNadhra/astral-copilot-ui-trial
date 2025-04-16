@@ -206,13 +206,11 @@ function EventItem({
         </div>
 
         {event.imageUrl && (
-          <div className="ml-3 h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
-            <Image
-              src={event.imageUrl}
-              alt={event.title}
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="h-20 w-20 rounded-md object-cover"
+          />
         )}
       </div>
     </div>

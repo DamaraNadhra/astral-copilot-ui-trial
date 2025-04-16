@@ -52,28 +52,26 @@ export default function Home() {
     );
   }
   return (
-    <div className="mx-auto flex w-full max-w-full flex-col items-center pt-6 sm:w-3/4">
+    <div className="flex w-full max-w-full flex-col items-center px-4 pt-6">
       <div className="relative w-full px-4">
         <h1 className="mb-4 text-2xl font-semibold">PDF Search</h1>
         {/* Search bar and grade dropdown container */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-stretch">
-            <div className="flex-1">
-              <SearchBar
-                value={searchQuery}
-                onChange={setSearchQuery}
-                onSubmit={setFinalQuery}
-                placeholder="Search..."
-              />
-            </div>
-            <div className="relative z-10 ml-4 h-12">
-              <GradeDropdown
-                value={searchQuery.grade}
-                onChange={(value) =>
-                  setSearchQuery({ ...searchQuery, grade: value })
-                }
-              />
-            </div>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="max-w-1/2 ">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSubmit={setFinalQuery}
+              placeholder="Search..."
+            />
+          </div>
+          <div className="relative z-10 h-12">
+            <GradeDropdown
+              value={searchQuery.grade}
+              onChange={(value) =>
+                setSearchQuery({ ...searchQuery, grade: value })
+              }
+            />
           </div>
         </div>
       </div>

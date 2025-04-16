@@ -12,6 +12,7 @@ import {
   type CarouselApi,
 } from "./ui/carousel";
 import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const EDGE_THRESHOLD = 80; // px from edge
 const SCROLL_DELAY = 220;
@@ -135,7 +136,6 @@ export function MobileView({
     api.on("select", () => {
       const selectedDate = currentWeek[api.selectedScrollSnap()];
       if (isDraggingRef.current) {
-        console.log("remounting during drag");
         setRemountKey((prev) => prev + 1);
       }
       if (selectedDate) {
@@ -149,9 +149,34 @@ export function MobileView({
     <div className="flex h-full flex-col overflow-hidden">
       {/* Current date header */}
       <div className="flex flex-col gap-2 bg-[#557af2] bg-gradient-to-l from-[#8563f2] to-[#557af2] py-4">
-        <span className="p-4 text-start text-2xl font-semibold text-white">
-          Your Schedule
-        </span>
+        <div className="flex flex-row items-center justify-normal gap-2">
+          <span className="p-4 text-start text-2xl font-semibold text-white">
+            Your Schedule
+          </span>
+          <button
+            className="rounded-full bg-white/10 p-2"
+            onClick={() => {
+              setCurrentDate(
+                moment(currentDate)
+                  .subtract(1, "week")
+                  .startOf("week")
+                  .toDate(),
+              );
+            }}
+          >
+            <ChevronLeft className="h-4 w-4 text-white" />
+          </button>
+          <button
+            className="rounded-full bg-white/10 p-2"
+            onClick={() => {
+              setCurrentDate(
+                moment(currentDate).add(1, "week").startOf("week").toDate(),
+              );
+            }}
+          >
+            <ChevronRight className="h-4 w-4 text-white" />
+          </button>
+        </div>
         <div className="mx-4 flex flex-row justify-between">
           {currentWeek.map((date) => (
             <div
@@ -194,6 +219,7 @@ export function MobileView({
       </div>
 
       <Carousel
+        key={`week-${currentWeek.map((date) => moment(date).format("YYYY-MM-DD")).join("-")}`}
         setApi={setApi}
         opts={{
           watchDrag: isDragging ? false : true,
@@ -201,8 +227,9 @@ export function MobileView({
           containScroll: "trimSnaps",
           skipSnaps: false,
         }}
+        className="h-full"
       >
-        <CarouselContent>
+        <CarouselContent className="h-full">
           {currentWeek.map((date, index) => {
             const dayEvents = events.filter(
               (event) =>
@@ -212,8 +239,10 @@ export function MobileView({
             );
             return (
               <CarouselItem
+                className="min-h-full"
                 key={`page-${index}-${remountKey}`}
                 id={`mobile-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`}
+                onClick={() => onTimeSlotClick(date, 0)}
               >
                 <Droppable
                   className="h-full"
