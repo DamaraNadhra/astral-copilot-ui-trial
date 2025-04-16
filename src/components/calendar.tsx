@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { CalendarEvent } from "./calendar-event";
 import { EventDialog } from "./event-dialog";
 import {
+  closestCenter,
   DndContext,
   type DragEndEvent,
   DragOverlay,
@@ -76,7 +77,6 @@ export function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
   const [currentView, setCurrentView] = useState<"month" | "week">("month");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [currentDeviceView, setCurrentDeviceView] = useState<
@@ -147,7 +147,7 @@ export function Calendar() {
     }
     return dates;
   };
-
+  
   // Handle event click
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
@@ -192,20 +192,16 @@ export function Calendar() {
 
   // Handle drag start
   const handleDragStart = (event: any) => {
+    console.log("Drag started");
     setIsDragging(true);
     setActiveId(event.active.id as string);
   };
 
-  useEffect(() => {
-    console.log(dndKey);
-    console.log(isDragging);
-  }, [dndKey]);
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
+    console.log("Drag ended");
     setIsDragging(false);
-    console.log("drag end");
     const eventId = active.id as string;
     const parts = over.id.toString().split("-");
     console.log(parts);
@@ -222,6 +218,12 @@ export function Calendar() {
     } else {
       handleWeekEventDrop(eventId, newDate, newHour);
     }
+    setActiveId(null);
+  };
+
+  const handleDragCancel = () => {
+    console.log("Drag cancelled");
+    setIsDragging(false);
     setActiveId(null);
   };
 
@@ -375,38 +377,64 @@ export function Calendar() {
     );
   }
 
-  const pointerSensor = useSensor(PointerSensor, {
+  // const pointerSensor = useSensor(PointerSensor, {
+  //   activationConstraint: {
+  //     ...(currentDeviceView === "mobile"
+  //       ? {
+  //           delay: 1000,
+  //           tolerance: 5,
+  //         }
+  //       : {
+  //           distance: 0.01,
+  //         }),
+  //   },
+  // });
+  const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      ...(currentDeviceView === "mobile"
-        ? {
-            delay: 100,
-            tolerance: 5,
-          }
-        : {
-            distance: 0.01,
-          }),
+      distance: 0.01,
     },
   });
-  const mouseSensor = useSensor(MouseSensor);
-  const touchSensor = useSensor(TouchSensor);
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 100,
+      tolerance: 2,
+    },
+  });
   const keyboardSensor = useSensor(KeyboardSensor);
 
   const sensors = useSensors(
     mouseSensor,
     touchSensor,
     keyboardSensor,
-    pointerSensor,
+    // pointerSensor,
   );
+
+  // useEffect(() => {
+  //   console.log("isDragging", isDragging);
+  // }, [isDragging]);
 
   return (
     <DndContext
       key={dndKey}
       onDragStart={handleDragStart}
-      sensors={sensors}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+      collisionDetection={closestCenter}
+      sensors={sensors}
     >
-      <div className="h-screen rounded-lg border bg-white py-4 shadow">
-        <div className="flex items-center justify-between border-b px-4 pb-4">
+      <div
+        className={cn(
+          "h-screen rounded-lg bg-white shadow",
+          currentDeviceView === "mobile" ? "h-full" : "py-4 border",
+          isDragging && "touch-none",
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center justify-between border-b px-4 pb-4",
+            currentDeviceView === "mobile" && "hidden",
+          )}
+        >
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={handlePrev}>
               <ChevronLeft className="h-4 w-4" />
@@ -487,7 +515,6 @@ export function Calendar() {
             ) : (
               <MobileAppEventComponent
                 event={events.find((e) => e.id === activeId)!}
-                onClick={() => {}}
               />
             )
           ) : null}

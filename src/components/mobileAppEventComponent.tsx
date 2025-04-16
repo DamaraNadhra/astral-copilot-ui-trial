@@ -3,17 +3,11 @@ import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
 
-export default function MobileAppEventComponent({
-  event,
-  onClick,
-}: {
-  event: Event;
-  onClick: () => void;
-}) {
+export default function MobileAppEventComponent({ event }: { event: Event }) {
   return (
     <div
       className="relative w-full cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-opacity duration-200 hover:opacity-90"
-      onClick={onClick}
+      onTouchStart={() => console.log("Touch start")}
     >
       <div className="relative h-[240px]">
         {event.imageUrl && (

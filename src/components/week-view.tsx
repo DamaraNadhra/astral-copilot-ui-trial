@@ -71,76 +71,79 @@ export function WeekView({
 
   const [weekdayEventsDialogOpen, setWeekdayEventsDialogOpen] = useState(false);
   if (viewMode === "desktop") {
-  return (
-    <div className="overflow-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
-      <div className="grid min-w-[800px] grid-cols-[80px_repeat(7,1fr)]">
-        {/* Header row with days */}
-        <div className="sticky top-0 z-10 border-b bg-white"></div>
-        {weekDates.map((date, index) => (
-          <div
-            key={`header-${index}`}
-            className="sticky top-0 z-50 cursor-pointer border-b border-l bg-white p-2 text-center font-medium hover:bg-gray-50"
-            onClick={() => {
-              setSelectedDate(date);
-              setWeekdayEventsDialogOpen(true);
-            }}
-          >
-            <div className="text-sm">{formatDate(date)}</div>
-          </div>
-        ))}
-
-        {/* Time slots */}
-        {hours.map((hour) => (
-          <React.Fragment key={`hour-${hour}`}>
-            {/* Hour label */}
-            <div className="sticky left-0 z-10 border-r border-b bg-white p-2 text-right text-sm text-gray-500">
-              {formatHour(hour)}
+    return (
+      <div
+        className="overflow-auto"
+        style={{ maxHeight: "calc(100vh - 200px)" }}
+      >
+        <div className="grid min-w-[800px] grid-cols-[80px_repeat(7,1fr)]">
+          {/* Header row with days */}
+          <div className="sticky top-0 z-10 border-b bg-white"></div>
+          {weekDates.map((date, index) => (
+            <div
+              key={`header-${index}`}
+              className="sticky top-0 z-50 cursor-pointer border-b border-l bg-white p-2 text-center font-medium hover:bg-gray-50"
+              onClick={() => {
+                setSelectedDate(date);
+                setWeekdayEventsDialogOpen(true);
+              }}
+            >
+              <div className="text-sm">{formatDate(date)}</div>
             </div>
+          ))}
 
-            {/* Day columns */}
-            {weekDates.map((date, dayIndex) => {
-              const timeSlotEvents = getEventsForTimeSlot(date, hour);
-              const droppableId = `week-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}-${hour}`;
+          {/* Time slots */}
+          {hours.map((hour) => (
+            <React.Fragment key={`hour-${hour}`}>
+              {/* Hour label */}
+              <div className="sticky left-0 z-10 border-r border-b bg-white p-2 text-right text-sm text-gray-500">
+                {formatHour(hour)}
+              </div>
 
-              return (
-                <Droppable key={droppableId} id={droppableId}>
-                  <div
-                    className={cn(
-                      "relative min-h-[60px] border-b border-l px-1 py-0",
-                      // "transition-colors hover:bg-gray-50",
-                    )}
-                    onClick={() => onTimeSlotClick(date, hour)}
-                  >
-                    {timeSlotEvents.map((event) => (
-                      <Draggable key={event.id} id={event.id}>
-                        <CalendarEvent
-                          event={event}
-                          mode="week"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEventClick(event);
-                          }}
-                        />
-                      </Draggable>
-                    ))}
-                  </div>
-                </Droppable>
-              );
-            })}
-          </React.Fragment>
-        ))}
+              {/* Day columns */}
+              {weekDates.map((date, dayIndex) => {
+                const timeSlotEvents = getEventsForTimeSlot(date, hour);
+                const droppableId = `week-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}-${hour}`;
+
+                return (
+                  <Droppable key={droppableId} id={droppableId}>
+                    <div
+                      className={cn(
+                        "relative min-h-[60px] border-b border-l px-1 py-0",
+                        // "transition-colors hover:bg-gray-50",
+                      )}
+                      onClick={() => onTimeSlotClick(date, hour)}
+                    >
+                      {timeSlotEvents.map((event) => (
+                        <Draggable key={event.id} id={event.id}>
+                          <CalendarEvent
+                            event={event}
+                            mode="week"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEventClick(event);
+                            }}
+                          />
+                        </Draggable>
+                      ))}
+                    </div>
+                  </Droppable>
+                );
+              })}
+            </React.Fragment>
+          ))}
+        </div>
+        <WeekdayEventsDialog
+          events={getEventsForDay(selectedDate)}
+          isOpen={weekdayEventsDialogOpen}
+          onClose={() => setWeekdayEventsDialogOpen(false)}
+          date={selectedDate}
+          onCreateEvent={() => {}}
+          onViewEvent={() => {}}
+        />
       </div>
-      <WeekdayEventsDialog
-        events={getEventsForDay(selectedDate)}
-        isOpen={weekdayEventsDialogOpen}
-        onClose={() => setWeekdayEventsDialogOpen(false)}
-        date={selectedDate}
-        onCreateEvent={() => {}}
-        onViewEvent={() => {}}
-      />
-    </div>
     );
-  } 
+  }
   return (
     <div className="overflow-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
       <div className="grid min-w-[800px] grid-cols-[80px_repeat(7,1fr)]">

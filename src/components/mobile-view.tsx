@@ -13,7 +13,7 @@ import {
 } from "./ui/carousel";
 import { useEffect, useRef, useState } from "react";
 
-const EDGE_THRESHOLD = 50; // px from edge
+const EDGE_THRESHOLD = 80; // px from edge
 const SCROLL_DELAY = 220;
 
 interface MobileViewProps {
@@ -50,8 +50,13 @@ export function MobileView({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const isDraggingRef = useRef(isDragging);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    isDraggingRef.current = isDragging;
+  }, [isDragging]);
 
   useEffect(() => {
     function handlePointerMove(e: PointerEvent) {
@@ -113,6 +118,8 @@ export function MobileView({
     location: "Dummy Location",
   };
 
+  const [remountKey, setRemountKey] = useState(0);
+
   useEffect(() => {
     if (!api) {
       return;
@@ -127,6 +134,10 @@ export function MobileView({
 
     api.on("select", () => {
       const selectedDate = currentWeek[api.selectedScrollSnap()];
+      if (isDraggingRef.current) {
+        console.log("remounting during drag");
+        setRemountKey((prev) => prev + 1);
+      }
       if (selectedDate) {
         setCurrentDate(selectedDate);
       }
@@ -146,7 +157,7 @@ export function MobileView({
             <div
               key={date.toISOString()}
               className={cn(
-                `flex min-w-[50px] flex-col gap-2 rounded-xl p-2`,
+                `flex w-[45px] flex-col gap-2 rounded-xl p-2`,
                 date.toISOString() === currentDate.toISOString()
                   ? "bg-purple-500 bg-gradient-to-br from-[#534be2] to-[#7145e7]"
                   : "bg-white/10",
@@ -186,10 +197,13 @@ export function MobileView({
         setApi={setApi}
         opts={{
           watchDrag: isDragging ? false : true,
+          dragFree: false,
+          containScroll: "trimSnaps",
+          skipSnaps: false,
         }}
       >
         <CarouselContent>
-          {currentWeek.map((date) => {
+          {currentWeek.map((date, index) => {
             const dayEvents = events.filter(
               (event) =>
                 event.date.getDate() === date.getDate() &&
@@ -198,7 +212,7 @@ export function MobileView({
             );
             return (
               <CarouselItem
-                key={date.toISOString()}
+                key={`page-${index}-${remountKey}`}
                 id={`mobile-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`}
               >
                 <Droppable
@@ -208,13 +222,16 @@ export function MobileView({
                   <div className="flex h-full flex-grow flex-col gap-2 p-4">
                     {dayEvents.length > 0 ? (
                       dayEvents.map((event) => (
-                        <Draggable key={event.id} id={event.id}>
+                        <Draggable
+                          key={event.id}
+                          id={event.id}
+                          onClick={() => {
+                            onEventClick(event);
+                          }}
+                        >
                           <MobileAppEventComponent
                             key={event.id}
                             event={event}
-                            onClick={() => {
-                              onEventClick(event);
-                            }}
                           />
                         </Draggable>
                       ))

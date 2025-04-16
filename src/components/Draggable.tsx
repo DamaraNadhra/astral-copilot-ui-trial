@@ -8,6 +8,7 @@ interface DraggableProps {
   children: React.ReactNode;
   className?: string;
   isOverlay?: boolean;
+  onClick?: () => void;
 }
 
 export function Draggable({
@@ -15,6 +16,7 @@ export function Draggable({
   children,
   className,
   isOverlay = false,
+  onClick,
 }: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -33,15 +35,14 @@ export function Draggable({
     <div
       suppressHydrationWarning
       ref={setNodeRef}
-      // style={isOverlay ? undefined : style}
+      // style={style}
       {...listeners}
       {...attributes}
       className={cn(
-        isOverlay &&
-          isOverlay &&
-          "bg-muted z-50 scale-105 cursor-grabbing opacity-80",
+        isOverlay && "bg-muted z-50 scale-105 cursor-grabbing opacity-80",
         className,
       )}
+      onClick={onClick}
     >
       {children}
     </div>
