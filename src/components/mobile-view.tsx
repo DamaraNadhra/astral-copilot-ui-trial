@@ -154,7 +154,11 @@ export function MobileView({
               )}
               onClick={() => {
                 setCurrentDate(date);
-                api?.scrollTo(currentWeek.findIndex((d) => d.toISOString() === date.toISOString()));
+                api?.scrollTo(
+                  currentWeek.findIndex(
+                    (d) => d.toISOString() === date.toISOString(),
+                  ),
+                );
               }}
             >
               <span className="text-center text-sm text-white">
@@ -194,7 +198,6 @@ export function MobileView({
             );
             return (
               <CarouselItem
-                className="basis-[90%]"
                 key={date.toISOString()}
                 id={`mobile-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`}
               >
@@ -202,7 +205,7 @@ export function MobileView({
                   className="h-full"
                   id={`mobile-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`}
                 >
-                  <div className="flex min-h-[40rem] flex-grow flex-col gap-2 p-4">
+                  <div className="flex h-full flex-grow flex-col gap-2 p-4">
                     {dayEvents.length > 0 ? (
                       dayEvents.map((event) => (
                         <Draggable key={event.id} id={event.id}>

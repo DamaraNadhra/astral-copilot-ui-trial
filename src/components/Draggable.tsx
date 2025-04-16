@@ -10,7 +10,12 @@ interface DraggableProps {
   isOverlay?: boolean;
 }
 
-export function Draggable({ id, children, className, isOverlay = false }: DraggableProps) {
+export function Draggable({
+  id,
+  children,
+  className,
+  isOverlay = false,
+}: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
@@ -26,12 +31,15 @@ export function Draggable({ id, children, className, isOverlay = false }: Dragga
 
   return (
     <div
+      suppressHydrationWarning
       ref={setNodeRef}
       // style={isOverlay ? undefined : style}
       {...listeners}
       {...attributes}
       className={cn(
-        isOverlay && isOverlay && "bg-muted opacity-80 scale-105 cursor-grabbing z-50",
+        isOverlay &&
+          isOverlay &&
+          "bg-muted z-50 scale-105 cursor-grabbing opacity-80",
         className,
       )}
     >

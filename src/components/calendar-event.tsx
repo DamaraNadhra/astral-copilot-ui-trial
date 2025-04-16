@@ -51,6 +51,8 @@ export function CalendarEvent({
             <Image
               src={event.imageUrl}
               alt={event.title}
+              width={100}
+              height={100}
               className="h-full w-full object-cover"
             />
           </div>

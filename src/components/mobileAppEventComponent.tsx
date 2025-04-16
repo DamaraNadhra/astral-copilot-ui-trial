@@ -17,7 +17,7 @@ export default function MobileAppEventComponent({
     >
       <div className="relative h-[240px]">
         {event.imageUrl && (
-          <Image
+          <img
             src={event.imageUrl}
             alt={event.title}
             className="absolute inset-0 h-full w-full object-cover"
