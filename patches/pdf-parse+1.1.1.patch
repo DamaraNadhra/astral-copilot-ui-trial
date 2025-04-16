@@ -9,3 +9,5 @@ index e9fc367..47fcd1e 100644
 -let isDebugMode = !module.parent; 
 +let isDebugMode = false; 
  
+ //process.env.AUTO_KENT_DEBUG
+ 
