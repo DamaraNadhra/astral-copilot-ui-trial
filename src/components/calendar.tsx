@@ -88,10 +88,6 @@ export function Calendar({
   const [isDragging, setIsDragging] = useState(false);
   const [dndKey, setDndKey] = useState(`dnd-${Date.now()}`);
 
-  useEffect(() => {
-    console.log(currentDate);
-  }, [currentDate]);
-
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -157,8 +153,8 @@ export function Calendar({
 
   // Handle event click
   const handleEventClick = (event: Event) => {
+    console.log("handleEventClick", event);
     setSelectedEvent(event);
-    console.log(event);
     setIsDetailsDialogOpen(true);
   };
 

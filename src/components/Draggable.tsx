@@ -43,7 +43,10 @@ export function Draggable({
         isDragging && "opacity-50",
         className,
       )}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
     >
       {children}
     </div>

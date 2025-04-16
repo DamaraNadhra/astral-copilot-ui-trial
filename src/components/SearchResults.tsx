@@ -7,7 +7,6 @@ import AttachmentPreviewCard from "./AttachmentPreviewCard";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-// RelevancyInfo component
 const RelevancyInfo = ({
   totalPages,
   query,
@@ -163,7 +162,6 @@ const SearchResult = ({
   );
 };
 
-// Search results container component
 export const SearchResults = ({ result }: { result?: any }) => {
   const docResp = result?.response;
   const [validResults, setValidResults] = useState<DocumentToSearchHistory[]>(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Edit, Trash2, X } from "lucide-react";
 import {
@@ -32,6 +32,10 @@ export function EventDetailsDialog({
   onDelete,
 }: EventDetailsDialogProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("isOpen", isOpen);
+  }, [isOpen]);
 
   if (!event) return null;
 
