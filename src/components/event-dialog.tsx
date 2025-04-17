@@ -227,6 +227,7 @@ export function EventDialog({
               <Input
                 id="imageUrl"
                 name="imageUrl"
+                type="url"
                 value={formData.imageUrl}
                 onChange={handleChange}
                 placeholder="Enter image URL, e.g. https://picsum.photos/200/300"
