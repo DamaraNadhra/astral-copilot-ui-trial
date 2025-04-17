@@ -181,6 +181,7 @@ export const searchEngineRouter = createTRPCRouter({
           };
         }
         const fullQuery = `${input.query.trim()} ${input.grade === Grade.ALL ? "" : "for students in " + input.grade.toLowerCase().replace("_", " ")} filetype:pdf`;
+        
         const relevantPages = await pdfParsingHelper.getFileRelevancy(
           input.url,
           fullQuery,
