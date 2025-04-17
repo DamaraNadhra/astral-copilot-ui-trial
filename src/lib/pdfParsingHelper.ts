@@ -51,7 +51,7 @@ export class PdfParsingHelper {
         const parsedPages = (await loadDataWithTimeout(
           this.reader,
           pdfUrl,
-          1000 * 30,
+          1000 * 60 * 3,
         )) as Document[];
         if (parsedPages.length > 0) {
           return parsedPages.map((page) => page.text);
@@ -73,7 +73,7 @@ export class PdfParsingHelper {
   async getFileRelevancy(pdfUrl: string, query: string) {
     const relevantPages = [];
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error("load_data timed out")), 1000 * 40);
+      setTimeout(() => reject(new Error("load_data timed out")), 1000 * 60 * 4);
     });
     const pageTexts = (await Promise.race([
       this.parsePdf(pdfUrl),
