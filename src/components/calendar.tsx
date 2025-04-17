@@ -234,14 +234,14 @@ export function Calendar({
 
     const newEvent: Event = {
       id: `event-${Date.now()}`,
-      title: "New Event",
+      title: "",
       date: newDate,
-      location: "123 Main St, Anytown, USA",
+      location: "",
       imageUrl: "",
       startTime,
       endTime,
       duration: 60,
-      description: "Add description here",
+      description: "",
       color: "bg-blue-500",
     };
 
