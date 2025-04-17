@@ -356,7 +356,7 @@ export function Calendar({
             {dayEvents
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map((event) => (
-                <Draggable key={event.id} id={event.id}>
+                <Draggable key={event.id} id={event.id} className="w-fit">
                   <CalendarEvent
                     event={event}
                     mode="month"
