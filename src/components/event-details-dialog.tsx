@@ -168,6 +168,7 @@ export function EventDetailsDialog({
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
         onSave={handleSaveEdit}
+        mode="edit"
         onDelete={() => {
           onDelete(event.id);
           setIsEditDialogOpen(false);

@@ -162,15 +162,14 @@ export function Calendar({
   const handleDayClick = (day: number) => {
     const newEvent: Event = {
       id: `event-${Date.now()}`,
-      title: "New Event",
+      title: "",
       date: new Date(year, month, day),
-      location: "123 Main St, Anytown, USA",
+      location: "",
       startTime: "12:00",
       duration: 60,
       endTime: "13:00",
-      imageUrl:
-        "https://fastly.picsum.photos/id/312/1920/1080.jpg?hmac=OD_fP9MUQN7uJ8NBR7tlii78qwHPUROGgohG4w16Kjw",
-      description: "Add description here",
+      imageUrl: "",
+      description: "",
       color: "bg-blue-500",
     };
     setSelectedEvent(newEvent);
@@ -376,18 +375,9 @@ export function Calendar({
     );
   }
 
-  // const pointerSensor = useSensor(PointerSensor, {
-  //   activationConstraint: {
-  //     ...(currentDeviceView === "mobile"
-  //       ? {
-  //           delay: 1000,
-  //           tolerance: 5,
-  //         }
-  //       : {
-  //           distance: 0.01,
-  //         }),
-  //   },
-  // });
+  useEffect(() => {
+    console.log("selectedEvent", selectedEvent);
+  }, [selectedEvent]);
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
       distance: 0.01,
@@ -520,9 +510,13 @@ export function Calendar({
         <EventDialog
           event={selectedEvent}
           isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
+          onClose={() => {
+            setIsDialogOpen(false);
+            setSelectedEvent(null);
+          }}
           onSave={saveEvent}
           onDelete={deleteEvent}
+          mode="create"
         />
         {selectedEvent && (
           <EventDetailsDialog

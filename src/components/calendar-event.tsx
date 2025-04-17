@@ -37,7 +37,8 @@ export function CalendarEvent({
         isDragging ? "" : mode === "week" ? "absolute" : "",
         mode === "month" ? "flex-shrink flex-grow" : "",
         "truncate rounded text-xs font-medium text-white",
-        "z-10 max-w-[130px] min-w-[130px] cursor-pointer border-1 border-gray-300 transition-opacity hover:opacity-90",
+        "z-10 max-w-[130px] min-w-[130px] cursor-pointer border-1 border-gray-300 transition-all hover:opacity-90",
+        "hover:translate-y-[-2px] hover:shadow-lg hover:shadow-gray-300/50",
         event.color,
       )}
       onClick={(e) => {

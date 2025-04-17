@@ -22,7 +22,7 @@ export class PdfParsingHelper {
         return pageData.getTextContent().then((textContent: any) => {
           const pageNumber = pageData.pageIndex + 1;
           const strings = textContent.items.map((item: any) => item.str);
-          const text = strings.join("\n"); 
+          const text = strings.join("\n");
           pages.push(text);
           return `=== Page ${pageNumber} ===\n${text}\n\n`;
         });
@@ -30,7 +30,7 @@ export class PdfParsingHelper {
       const loadDataWithTimeout = async (
         reader: LlamaParseReader,
         file: string,
-        timeoutMs = 1000 * 60 * 2,
+        timeoutMs = 1000 * 20,
       ) => {
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error("load_data timed out")), timeoutMs);
@@ -51,14 +51,17 @@ export class PdfParsingHelper {
         const parsedPages = (await loadDataWithTimeout(
           this.reader,
           pdfUrl,
-          1000 * 60 * 3,
+          1000 * 30,
         )) as Document[];
         if (parsedPages.length > 0) {
           return parsedPages.map((page) => page.text);
         }
         return pages;
       } catch (error) {
-        console.error("Error parsing PDF with LlamaParseReader, fallback to pdf-parse:", error);
+        console.error(
+          "Error parsing PDF with LlamaParseReader, fallback to pdf-parse:",
+          error,
+        );
         return pages;
       }
     } catch (error) {
@@ -69,7 +72,13 @@ export class PdfParsingHelper {
 
   async getFileRelevancy(pdfUrl: string, query: string) {
     const relevantPages = [];
-    const pageTexts = await this.parsePdf(pdfUrl);
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("load_data timed out")), 1000 * 40);
+    });
+    const pageTexts = (await Promise.race([
+      this.parsePdf(pdfUrl),
+      timeoutPromise,
+    ])) as string[];
 
     if (!pageTexts) {
       throw new Error("Error while parsing PDF");

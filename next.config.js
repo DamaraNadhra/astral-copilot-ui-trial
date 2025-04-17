@@ -11,6 +11,9 @@ const config = {
       {
         hostname: "fastly.picsum.photos",
       },
+      {
+        hostname: "images.unsplash.com",
+      },
     ],
   },
   experimental: {

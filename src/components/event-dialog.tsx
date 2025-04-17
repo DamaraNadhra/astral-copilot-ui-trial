@@ -28,6 +28,7 @@ interface EventDialogProps {
   event: Event | null;
   isOpen: boolean;
   onClose: () => void;
+  mode: "create" | "edit";
   onSave: (event: Event) => void;
   onDelete: (eventId: string) => void;
 }
@@ -37,6 +38,7 @@ export function EventDialog({
   isOpen,
   onClose,
   onSave,
+  mode,
   onDelete,
 }: EventDialogProps) {
   const [formData, setFormData] = useState<Event>({
@@ -137,7 +139,7 @@ export function EventDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {event && event.id ? "Edit Event" : "Create Event"}
+              {mode === "edit" ? "Edit Event" : "Create Event"}
             </DialogTitle>
           </DialogHeader>
 
@@ -149,6 +151,7 @@ export function EventDialog({
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
+                placeholder="Enter title"
                 required
               />
             </div>
@@ -215,6 +218,7 @@ export function EventDialog({
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
+                placeholder="Enter location, e.g. 123 Main St, Anytown, USA"
               />
             </div>
 
@@ -225,6 +229,7 @@ export function EventDialog({
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleChange}
+                placeholder="Enter image URL, e.g. https://picsum.photos/200/300"
               />
             </div>
 
@@ -235,6 +240,7 @@ export function EventDialog({
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                placeholder="Enter description"
                 rows={3}
               />
             </div>
