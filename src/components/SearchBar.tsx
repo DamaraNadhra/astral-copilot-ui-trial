@@ -5,6 +5,7 @@ import { Search, History, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "~/trpc/react";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface SearchHistoryProps {
   history: { query: string; grade: Grade }[];
@@ -12,11 +13,7 @@ interface SearchHistoryProps {
   isLoading: boolean;
 }
 
-function SearchHistory({
-  history,
-  isLoading,
-  onSelect,
-}: SearchHistoryProps) {
+function SearchHistory({ history, isLoading, onSelect }: SearchHistoryProps) {
   if (isLoading) {
     return (
       <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
@@ -40,7 +37,16 @@ function SearchHistory({
   }
 
   return (
-    <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-lg border border-gray-200 bg-white shadow-lg">
+    <ScrollArea
+      className="absolute top-full right-0 left-0 z-50 mt-1 max-h-72 rounded-lg border border-gray-200 bg-white shadow-lg overflow-auto"
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: 0,
+        right: 0,
+        zIndex: 100,
+      }}
+    >
       {history.map(({ query, grade }, index) => (
         <button
           key={index}
@@ -53,7 +59,7 @@ function SearchHistory({
           <span>{query}</span>
         </button>
       ))}
-    </div>
+    </ScrollArea>
   );
 }
 
@@ -75,7 +81,6 @@ export function SearchBar({
   const { data: session } = useSession();
 
   const user = session?.user;
-
 
   const { data: searchHistory, isLoading: isHistoryLoading } =
     api.searchEngine.getSearchHistory.useQuery(
